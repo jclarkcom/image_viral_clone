@@ -841,6 +841,94 @@ app.post('/api/generate-videos', async (req, res) => {
   }
 });
 
+// Extend videos from 8 seconds to 10 seconds
+app.post('/api/extend-videos', async (req, res) => {
+  try {
+    const { batchId } = req.body;
+
+    if (!batchId) {
+      return res.status(400).json({ error: 'Batch ID is required' });
+    }
+
+    // Find all video files for this batch
+    const videosDir = path.join('generated', 'videos');
+    const files = await fs.readdir(videosDir);
+    const batchVideos = files.filter(f => f.startsWith(batchId) && f.endsWith('.mp4'));
+
+    if (batchVideos.length === 0) {
+      return res.status(404).json({ error: 'No videos found for this batch' });
+    }
+
+    const results = [];
+
+    for (const videoFile of batchVideos) {
+      const inputPath = path.join(videosDir, videoFile);
+      const outputFilename = videoFile.replace('.mp4', '_extended.mp4');
+      const outputPath = path.join(videosDir, outputFilename);
+
+      try {
+        console.log(`Extending video: ${videoFile}`);
+
+        // FFmpeg command to extend video from 8 to 10 seconds
+        // Using setpts to slow down video by 1.25x (8 * 1.25 = 10)
+        // atempo filter to slow audio from 8s to 10s (factor 0.8 = 8/10)
+        // Force exact 10 second duration with -t 10
+        const ffmpegCommand = `ffmpeg -i "${inputPath}" -filter_complex "[0:v]setpts=1.25*PTS,fps=30[v];[0:a]atempo=0.8,apad=whole_dur=10[a]" -map "[v]" -map "[a]" -t 10 -r 30 "${outputPath}" -y`;
+
+        await execPromise(ffmpegCommand);
+        console.log(`Successfully extended ${videoFile} to 10 seconds`);
+
+        results.push({
+          original: videoFile,
+          extended: outputFilename,
+          url: `/generated/videos/${outputFilename}`,
+          success: true
+        });
+
+      } catch (error) {
+        console.error(`Error extending ${videoFile}:`, error.message);
+
+        // Fallback: Try simpler method without audio if complex filter fails
+        try {
+          console.log(`Trying simpler extension method for ${videoFile}`);
+          // Use setpts to slow down to 1.25x, then force exact 10 second duration
+          const simpleFfmpegCommand = `ffmpeg -i "${inputPath}" -filter:v "setpts=1.25*PTS" -an -t 10 -r 30 "${outputPath}" -y`;
+          await execPromise(simpleFfmpegCommand);
+
+          results.push({
+            original: videoFile,
+            extended: outputFilename,
+            url: `/generated/videos/${outputFilename}`,
+            success: true,
+            note: 'Extended without audio processing'
+          });
+        } catch (fallbackError) {
+          results.push({
+            original: videoFile,
+            error: error.message,
+            success: false
+          });
+        }
+      }
+    }
+
+    const successful = results.filter(r => r.success).length;
+    const failed = results.filter(r => !r.success).length;
+
+    res.json({
+      batchId,
+      totalVideos: batchVideos.length,
+      successful,
+      failed,
+      results
+    });
+
+  } catch (error) {
+    console.error('Video extension error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Helper function to translate text
 async function translateText(text, targetLanguage) {
   try {

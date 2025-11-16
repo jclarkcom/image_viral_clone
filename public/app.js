@@ -855,6 +855,15 @@ function displayGeneratedImages(result) {
 
     const isVideo = result.mediaType === 'video';
 
+    // Show video extension section if videos were generated
+    if (isVideo && result.successful > 0) {
+        const extensionSection = document.getElementById('video-extension-section');
+        if (extensionSection) {
+            extensionSection.classList.remove('hidden');
+            extensionSection.dataset.batchId = result.batchId;
+        }
+    }
+
     // Display cost summary if available
     if (result.costInfo) {
         const costSummary = document.getElementById('cost-summary');
@@ -1049,6 +1058,94 @@ async function regenerateWatermark(index) {
         console.error('Error regenerating watermark:', error);
     }
 }
+
+// Video Extension Functions
+async function extendVideos() {
+    const extensionSection = document.getElementById('video-extension-section');
+    const batchId = extensionSection.dataset.batchId;
+
+    if (!batchId) {
+        alert('No batch ID found. Please generate videos first.');
+        return;
+    }
+
+    const button = document.getElementById('extend-all-videos');
+    const originalText = button.textContent;
+    button.disabled = true;
+    button.textContent = 'Extending videos...';
+
+    try {
+        const response = await fetch('/api/extend-videos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ batchId })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            // Update the video grid with extended videos
+            const videoCards = document.querySelectorAll('.video-card');
+
+            result.results.forEach((extResult) => {
+                if (extResult.success) {
+                    // Find the matching video card and update it
+                    videoCards.forEach(card => {
+                        const video = card.querySelector('video');
+                        if (video) {
+                            const currentSrc = video.querySelector('source').src;
+                            if (currentSrc.includes(extResult.original)) {
+                                // Update to extended video
+                                video.querySelector('source').src = extResult.url;
+                                video.load();
+
+                                // Update info
+                                const info = card.querySelector('.video-info p');
+                                if (info) {
+                                    info.textContent = 'Extended to 10 seconds';
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+
+            // Show success message
+            const successMsg = document.createElement('div');
+            successMsg.className = 'success-message';
+            successMsg.textContent = `Successfully extended ${result.successful} of ${result.totalVideos} videos to 10 seconds`;
+            extensionSection.appendChild(successMsg);
+
+            // Hide the button after successful extension
+            button.style.display = 'none';
+
+            setTimeout(() => {
+                if (successMsg.parentNode) {
+                    successMsg.remove();
+                }
+            }, 5000);
+
+        } else {
+            alert('Error extending videos: ' + (result.error || 'Unknown error'));
+        }
+    } catch (error) {
+        console.error('Error extending videos:', error);
+        alert('Failed to extend videos. Please try again.');
+    } finally {
+        button.disabled = false;
+        button.textContent = originalText;
+    }
+}
+
+// Initialize event listener for video extension
+document.addEventListener('DOMContentLoaded', () => {
+    const extendButton = document.getElementById('extend-all-videos');
+    if (extendButton) {
+        extendButton.addEventListener('click', extendVideos);
+    }
+});
 
 // Initialize on load
 document.addEventListener('DOMContentLoaded', init);

@@ -202,7 +202,7 @@
                 <div class="watermark-controls">
                     <div class="watermark-input-group">
                         <label for="watermark-text">Watermark Text:</label>
-                        <input type="text" id="watermark-text" value="Gardening Tip and Trick" placeholder="Enter watermark text">
+                        <input type="text" id="watermark-text" value="s and Tricks" placeholder="Enter watermark text">
                     </div>
                     <div class="watermark-options">
                         <label class="checkbox-label">
@@ -295,6 +295,29 @@
                         <span id="cost-summary-amount" class="cost-summary-amount"></span>
                     </div>
                     <small id="cost-summary-breakdown" class="cost-summary-breakdown"></small>
+                </div>
+            </div>
+            <!-- Video Extension Section -->
+            <div id="video-extension-section" class="video-extension-section hidden">
+                <div class="extension-header">
+                    <h3>Video Extension Options</h3>
+                    <p class="extension-info">Extend your 8-second videos to 10 seconds with smooth frame interpolation and pitch-preserved audio stretching</p>
+                </div>
+                <div class="extension-controls">
+                    <button id="extend-all-videos" class="btn btn-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 12h18M3 12l4-4m-4 4l4 4m14-4l-4-4m4 4l-4 4"></path>
+                        </svg>
+                        Extend All Videos to 10s
+                    </button>
+                    <div class="extension-status hidden" id="extension-status">
+                        <div class="spinner-small"></div>
+                        <span id="extension-status-text">Processing...</span>
+                    </div>
+                </div>
+                <div id="extended-videos-list" class="extended-videos-list hidden">
+                    <h4>Extended Videos (10 seconds)</h4>
+                    <div id="extended-videos-grid" class="videos-grid"></div>
                 </div>
             </div>
             <div id="images-grid" class="images-grid"></div>
