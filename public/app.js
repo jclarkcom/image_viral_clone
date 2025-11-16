@@ -790,7 +790,7 @@ async function generateVariations() {
 
         // Get watermark settings
         const watermarkEnabled = document.getElementById('watermark-enabled').checked;
-        const watermarkText = document.getElementById('watermark-text').value || 'Gardening Tip and Trick';
+        const watermarkText = document.getElementById('watermark-text').value || 'Gardening Tips & Tricks';
 
         const endpoint = mediaType === 'video' ? '/api/generate-videos' : '/api/generate-variations';
 
@@ -995,7 +995,7 @@ async function applyWatermark(item, index) {
             },
             body: JSON.stringify({
                 imagePath: item.url,
-                watermarkText: item.watermarkText || 'Gardening Tip and Trick',
+                watermarkText: item.watermarkText || 'Gardening Tips & Tricks',
                 opacity: parseInt(opacity)
             })
         });
@@ -1033,7 +1033,7 @@ async function regenerateWatermark(index) {
             },
             body: JSON.stringify({
                 imagePath: item.url,
-                watermarkText: item.watermarkText || 'Gardening Tip and Trick',
+                watermarkText: item.watermarkText || 'Gardening Tips & Tricks',
                 opacity: parseInt(opacity),
                 regenerate: true
             })
