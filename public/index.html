@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Viral Clone - AI-Powered Image Variations</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;700&family=Roboto+Mono:wght@400;500&family=Dancing+Script:wght@700&family=Bebas+Neue&family=Oswald:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Side Navigation -->
+    <nav id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <h3>History</h3>
+            <button id="sidebar-toggle" class="sidebar-toggle">×</button>
+        </div>
+        <div class="sidebar-content">
+            <div id="sessions-list" class="sessions-list">
+                <!-- Sessions will be loaded here -->
+            </div>
+        </div>
+    </nav>
+
+    <!-- Menu Toggle Button -->
+    <button id="menu-toggle" class="menu-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <div class="container">
+        <header>
+            <h1>Image Viral Clone</h1>
+            <p>Transform your images with AI-powered text extraction and multilingual variations</p>
+        </header>
+
+        <!-- Step 1: Upload Section -->
+        <section id="upload-section" class="card">
+            <div class="card-header">
+                <span class="step-number">1</span>
+                <h2>Upload Your Image</h2>
+            </div>
+            <div id="drop-zone" class="drop-zone">
+                <svg class="upload-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <p>Drag & drop an image here or click to browse</p>
+                <input type="file" id="file-input" accept="image/*" hidden>
+                <button id="browse-btn" class="btn btn-secondary">Browse Files</button>
+            </div>
+            <div id="preview-container" class="preview-container hidden">
+                <img id="preview-image" src="" alt="Preview">
+                <button id="remove-image" class="btn btn-small btn-danger">Remove</button>
+            </div>
+            <!-- Cost Display for Analysis -->
+            <div id="analysis-cost" class="cost-display hidden">
+                <div class="cost-info">
+                    <span class="cost-label">Analysis Cost:</span>
+                    <span class="cost-amount" id="analysis-cost-amount">Free (Preview)</span>
+                </div>
+                <small class="cost-details" id="analysis-cost-details">Using gemini-2.0-flash-exp</small>
+            </div>
+            <button id="analyze-btn" class="btn btn-primary hidden">Analyze Image</button>
+        </section>
+
+        <!-- Step 2: Analysis Results -->
+        <section id="analysis-section" class="card hidden">
+            <div class="card-header">
+                <span class="step-number">2</span>
+                <h2>Image Analysis</h2>
+            </div>
+            <div id="analysis-results">
+                <div class="analysis-item">
+                    <h3>Description</h3>
+                    <div id="description-container">
+                        <p id="description-text"></p>
+                        <textarea id="description-edit" class="hidden"></textarea>
+                        <div class="description-buttons">
+                            <button id="edit-description-btn" class="btn btn-small btn-secondary">Edit</button>
+                            <button id="save-description-btn" class="btn btn-small btn-primary hidden">Save</button>
+                            <button id="cancel-description-btn" class="btn btn-small btn-secondary hidden">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="analysis-item">
+                    <h3>Extracted Text</h3>
+                    <p id="extracted-text"></p>
+                    <p class="language-info">Language: <span id="text-language"></span></p>
+                </div>
+                <div class="analysis-item">
+                    <h3>English Translation</h3>
+                    <p id="translation-text"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 3: Generation Settings -->
+        <section id="settings-section" class="card hidden">
+            <div class="card-header">
+                <span class="step-number">3</span>
+                <h2>Customize Your Output</h2>
+            </div>
+
+            <!-- Media Type Selection -->
+            <div class="media-type-selection">
+                <h3>Output Type</h3>
+                <div class="media-type-options">
+                    <label class="media-type-card">
+                        <input type="radio" name="media-type" value="image" checked>
+                        <div class="media-type-content">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <rect x="3" y="3" width="18" height="18" rx="2" stroke-width="2"/>
+                                <circle cx="8.5" cy="8.5" r="1.5" stroke-width="2"/>
+                                <path d="M21 15l-5-5L5 21" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span>Images</span>
+                            <small>Generate static image variations</small>
+                        </div>
+                    </label>
+                    <label class="media-type-card">
+                        <input type="radio" name="media-type" value="video">
+                        <div class="media-type-content">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <rect x="2" y="3" width="20" height="18" rx="2" stroke-width="2"/>
+                                <polygon points="10 8 16 12 10 16" fill="currentColor"/>
+                            </svg>
+                            <span>Videos</span>
+                            <small>Generate 8-second videos with audio</small>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Font Selection -->
+            <div class="font-selection">
+                <div class="font-controls">
+                    <div class="font-style-group">
+                        <label for="font-select">Text Font Style:</label>
+                        <select id="font-select">
+                            <option value="sans-serif" data-font-family="Inter, sans-serif">Modern Sans (Inter)</option>
+                            <option value="serif" data-font-family="'Playfair Display', serif">Elegant Serif (Playfair)</option>
+                            <option value="mono" data-font-family="'Roboto Mono', monospace">Monospace (Roboto Mono)</option>
+                            <option value="script" data-font-family="'Dancing Script', cursive">Script (Dancing Script)</option>
+                            <option value="display" data-font-family="'Bebas Neue', sans-serif">Display (Bebas Neue)</option>
+                            <option value="condensed" data-font-family="'Oswald', sans-serif">Condensed (Oswald)</option>
+                        </select>
+                    </div>
+                    <div class="text-size-group">
+                        <label for="text-size">Text Size:</label>
+                        <select id="text-size">
+                            <option value="small">Small</option>
+                            <option value="medium">Medium</option>
+                            <option value="large" selected>Large</option>
+                            <option value="extra-large">Extra Large</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="font-preview" class="font-preview">
+                    <p id="font-preview-text">The quick brown fox jumps over the lazy dog</p>
+                </div>
+            </div>
+
+            <!-- Image Format Settings -->
+            <div class="format-settings">
+                <div class="format-group">
+                    <label>Orientation:</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="orientation" value="portrait" checked>
+                            <span>Portrait (Vertical)</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="orientation" value="landscape">
+                            <span>Landscape (Horizontal)</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="orientation" value="square">
+                            <span>Square</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="format-group">
+                    <label for="resolution-select">Resolution:</label>
+                    <select id="resolution-select">
+                        <option value="1024x1024" selected>1024×1024 (Square)</option>
+                        <option value="1024x768">1024×768 (Landscape)</option>
+                        <option value="768x1024">768×1024 (Portrait)</option>
+                        <option value="1280x720">1280×720 (HD Landscape)</option>
+                        <option value="720x1280">720×1280 (HD Portrait)</option>
+                        <option value="512x512">512×512 (Small Square)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Watermark Settings -->
+            <div class="watermark-settings">
+                <h3>Watermark Settings</h3>
+                <div class="watermark-controls">
+                    <div class="watermark-input-group">
+                        <label for="watermark-text">Watermark Text:</label>
+                        <input type="text" id="watermark-text" value="Gardening Tip and Trick" placeholder="Enter watermark text">
+                    </div>
+                    <div class="watermark-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="watermark-enabled" checked>
+                            <span>Add watermarks to images</span>
+                        </label>
+                        <div class="opacity-control">
+                            <label for="watermark-opacity">Opacity: <span id="opacity-value">40%</span></label>
+                            <input type="range" id="watermark-opacity" min="10" max="100" value="40" step="10">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-grid">
+                <div class="setting-group">
+                    <label>Languages to Generate:</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="language" value="english" checked>
+                            <span>English</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="language" value="french" checked>
+                            <span>French</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="language" value="german" checked>
+                            <span>German</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="language" value="portuguese" checked>
+                            <span>Portuguese</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="setting-group">
+                    <label for="variations-count">Variations per Language:</label>
+                    <select id="variations-count">
+                        <option value="1">1 variation</option>
+                        <option value="2">2 variations</option>
+                        <option value="3">3 variations</option>
+                        <option value="4">4 variations</option>
+                        <option value="5" selected>5 variations</option>
+                    </select>
+                    <p class="total-info">Total images to generate: <span id="total-images">20</span></p>
+                </div>
+            </div>
+            <!-- Cost Display for Generation -->
+            <div id="generation-cost" class="cost-display">
+                <div class="cost-info">
+                    <span class="cost-label">Estimated Cost:</span>
+                    <span class="cost-amount" id="generation-cost-amount">Free (Preview)</span>
+                </div>
+                <small class="cost-details" id="generation-cost-details">20 images using gemini-2.5-flash-image</small>
+            </div>
+            <button id="generate-btn" class="btn btn-primary">Generate Variations</button>
+        </section>
+
+        <!-- Step 4: Generated Images -->
+        <section id="results-section" class="card hidden">
+            <div class="card-header">
+                <span class="step-number">4</span>
+                <h2>Generated Variations</h2>
+            </div>
+            <div class="results-header">
+                <p id="generation-status"></p>
+                <button id="download-all" class="btn btn-secondary hidden">Download All</button>
+            </div>
+            <div id="progress-container" class="hidden">
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+                <p id="progress-text">0 / 0</p>
+            </div>
+            <!-- Cost Summary -->
+            <div id="cost-summary" class="cost-summary hidden">
+                <h3>Generation Cost Summary</h3>
+                <div class="cost-summary-content">
+                    <div class="cost-summary-item">
+                        <span class="cost-summary-label">Model Used:</span>
+                        <span id="cost-summary-model"></span>
+                    </div>
+                    <div class="cost-summary-item">
+                        <span class="cost-summary-label">Total Generated:</span>
+                        <span id="cost-summary-count"></span>
+                    </div>
+                    <div class="cost-summary-item">
+                        <span class="cost-summary-label">Actual Cost:</span>
+                        <span id="cost-summary-amount" class="cost-summary-amount"></span>
+                    </div>
+                    <small id="cost-summary-breakdown" class="cost-summary-breakdown"></small>
+                </div>
+            </div>
+            <div id="images-grid" class="images-grid"></div>
+        </section>
+
+        <!-- Image Modal -->
+        <div id="image-modal" class="modal hidden">
+            <div class="modal-content">
+                <span class="modal-close">&times;</span>
+                <img id="modal-image" src="" alt="Full size image">
+                <div class="modal-info">
+                    <h3 id="modal-title"></h3>
+                    <p id="modal-description"></p>
+                    <div class="modal-buttons">
+                        <button id="modal-regenerate-watermark" class="btn btn-secondary hidden">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
+                            Refresh Watermark
+                        </button>
+                        <button id="modal-download" class="btn btn-primary">Download Image</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="loading-overlay hidden">
+            <div class="spinner"></div>
+            <p id="loading-text">Processing...</p>
+        </div>
+    </div>
+
+    <script src="cost-calculator.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

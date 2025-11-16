@@ -1,0 +1,61 @@
+# Environment variables
+.env
+.env.local
+.env.production
+.env.development
+
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Generated files
+generated/
+uploads/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+image-viral.db
+
+# Test files
+test-*.mp4
+test-*.png
+test-*.jpg
+generated_test.png
+image.png
+*.png
+*.jpg
+*.jpeg
+*.mp4
+nul
+
+# IDE and system files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Build files
+dist/
+build/
+
+# Package manager files
+package-lock.json.backup
+yarn.lock.backup

@@ -1,0 +1,28 @@
+{
+  "name": "image-viral-clone",
+  "version": "1.0.0",
+  "description": "Image description, translation, and variation generator using Google Gemini",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "node test-suite.js",
+    "test:gemini": "node test-gemini.js",
+    "test:multilang": "node test-multilang.js",
+    "test:verbose": "node test-suite.js --verbose"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "archiver": "^7.0.1",
+    "better-sqlite3": "^9.6.0",
+    "canvas": "^3.2.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.18.2",
+    "multer": "^1.4.5-lts.1",
+    "node-fetch": "^2.6.7",
+    "sharp": "^0.33.2",
+    "uuid": "^9.0.1"
+  },
+  "author": "",
+  "license": "MIT"
+}
